@@ -31,8 +31,9 @@ protected:
     void mousePressEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
 
-private Q_SLOTS:
+public Q_SLOTS:
     void timerEvent(QTimerEvent *event);
+    void threadExit();
 
 private:
     void lvglInit();

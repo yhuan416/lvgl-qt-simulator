@@ -1,4 +1,5 @@
 #include "stdio.h"
+#include "unistd.h"
 
 #include "lvgl.h"
 
@@ -26,4 +27,6 @@ int app_main(const int argc, const char **argv)
     lv_obj_align(btn1, LV_ALIGN_CENTER, 0, -40);
     label = lv_label_create(btn1);
     lv_label_set_text(label, "Button");
+
+    return 0;
 }

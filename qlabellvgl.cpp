@@ -24,13 +24,16 @@ QLabelLvgl::QLabelLvgl(QWidget* parent, Qt::WindowFlags f)
     // start lvgl tick
     timerId = startTimer(LVGL_TICK_TIME);
 
+    // start app
     startLVGLWorkThread();
 }
 
 QLabelLvgl::~QLabelLvgl()
 {
-    t->quit();
-    t->wait();
+    if (t) {
+        t->exit(0);
+        t->wait();
+    }
 
     killTimer(timerId);
 }
@@ -81,6 +84,13 @@ void QLabelLvgl::timerEvent(QTimerEvent *event)
     }
 }
 
+void QLabelLvgl::threadExit()
+{
+    qDebug() << "lvgl thread run end.";
+    t->deleteLater();
+    t = nullptr;
+}
+
 void QLabelLvgl::lvglInit()
 {
     lv_init();
@@ -115,7 +125,7 @@ bool QLabelLvgl::eventFilter(QObject *obj, QEvent *event)
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
         int x = mouseEvent->pos().x();
         int y = mouseEvent->pos().y();
-        qDebug("Mouse move %d, %d\n", x, y);
+        qDebug("Mouse move %d, %d.", x, y);
     }
     return false;
 }
@@ -134,9 +144,11 @@ void QLabelLvgl::disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color
 void QLabelLvgl::startLVGLWorkThread()
 {
     t = QThread::create([]{
-        int ret = app_main(0, nullptr);
-        return ret;
+        const char *argv[] = {
+            "",
+        };
+        return app_main(sizeof (argv)/sizeof (argv[0]), argv);
     });
-    connect(t, &QThread::finished, t, &QObject::deleteLater);
+    connect(t, &QThread::finished, this, &QLabelLvgl::threadExit);
     t->start();
 }

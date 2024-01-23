@@ -398,7 +398,7 @@ FORMS += \
     mainwindow.ui
 
 TRANSLATIONS += \
-    lvgl_driver_qt_zh_CN.ts
+    lvgl-qt-simulator_zh_CN.ts
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
